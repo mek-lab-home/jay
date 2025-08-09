@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>게임 선택 페이지</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            height: 100%;
+            text-align: center;
+            color: white;
+        }
+
+        body {
+            background: linear-gradient(270deg, #ff6ec4, #7873f5, #42e695, #f9f871);
+            background-size: 800% 800%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        h1 {
+            margin-bottom: 40px;
+            font-size: 40px;
+            text-shadow: 2px 2px 5px #000;
+        }
+
+        .game-button {
+            margin: 15px;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.4);
+            color: white;
+            border: 2px solid white;
+            border-radius: 10px;
+            width: 220px;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .game-button:hover {
+            transform: scale(1.1);
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        canvas#starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎮 게임을 선택하세요 🎮</h1>
+
+    <button class="game-button" onclick="location.href='game1.html'">게임 1: 숫자 맞추기</button>
+    <button class="game-button" onclick="location.href='game2.html'">게임 2: 클릭 게임</button>
+    <button class="game-button" onclick="location.href='game3.html'">게임 3: 퀴즈</button>
+    <button class="game-button" onclick="location.href='game4.html'">게임 4: 팩맨</button>
+
+
+    <!-- 별 배경 -->
+    <canvas id="starfield"></canvas>
+
+    <script>
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function createStars(count) {
+            stars = [];
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5,
+                    speed: Math.random() * 0.5 + 0.2
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            for (const star of stars) {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+                star.y += star.speed;
+                if (star.y > canvas.height) {
+                    star.y = 0;
+                    star.x = Math.random() * canvas.width;
+                }
+            }
+        }
+
+        function animate() {
+            drawStars();
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            createStars(200);
+        });
+
+        resizeCanvas();
+        createStars(200);
+        animate();
+    </script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>클릭 게임 테스트</title>
+  <style>
+    body {
+      background-color: #222;
+      color: white;
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+    #game-area {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+    .target {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: #f06;
+      border-radius: 50%;
+      border: 2px solid white;
+      cursor: pointer;
+    }
+    #score-board, #timer {
+      position: absolute;
+      top: 20px;
+      font-size: 24px;
+      user-select: none;
+    }
+    #score-board { left: 20px; }
+    #timer { right: 20px; }
+    #game-over {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 32px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-area">
+    <div id="score-board">점수: 0</div>
+    <div id="timer">남은 시간: 30초</div>
+    <div id="game-over">게임 종료! 점수: <span id="final-score">0</span></div>
+  </div>
+
+  <script>
+    const gameArea = document.getElementById('game-area');
+    const scoreBoard = document.getElementById('score-board');
+    const timerDisplay = document.getElementById('timer');
+    const gameOver = document.getElementById('game-over');
+    const finalScore = document.getElementById('final-score');
+
+    let score = 0;
+    let timeLeft = 30;
+    let gameRunning = true;
+
+    function getRandomPosition() {
+      const x = Math.random() * (window.innerWidth - 60);
+      const y = Math.random() * (window.innerHeight - 60);
+      return { x, y };
+    }
+
+    function spawnTarget() {
+      if (!gameRunning) return;
+
+      const target = document.createElement('div');
+      target.className = 'target';
+
+      const { x, y } = getRandomPosition();
+      target.style.left = x + 'px';
+      target.style.top = y + 'px';
+
+      target.onclick = () => {
+        score++;
+        scoreBoard.textContent = `점수: ${score}`;
+        if (gameArea.contains(target)) {
+          gameArea.removeChild(target);
+        }
+        spawnTarget();
+      };
+
+      gameArea.appendChild(target);
+
+      setTimeout(() => {
+        if (gameArea.contains(target)) {
+          gameArea.removeChild(target);
+          spawnTarget();
+        }
+      }, 2000);
+    }
+
+    function updateTimer() {
+      const timer = setInterval(() => {
+        if (!gameRunning) {
+          clearInterval(timer);
+          return;
+        }
+        timeLeft--;
+        timerDisplay.textContent = `남은 시간: ${timeLeft}초`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          gameRunning = false;
+          document.querySelectorAll('.target').forEach(t => t.remove());
+          gameOver.style.display = 'block';
+          finalScore.textContent = score;
+        }
+      }, 1000);
+    }
+
+    // 게임 시작
+    spawnTarget();
+    updateTimer();
+  </script>
+</body>
+</html>

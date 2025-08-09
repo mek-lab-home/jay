@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>게임 3: 퀴즈 게임</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+    .quiz-container {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 500px;
+      width: 100%;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .question {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .options button {
+      background: #764ba2;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px 5px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .options button:hover {
+      background-color: #a57eea;
+    }
+    .score {
+      font-size: 22px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <h1>퀴즈 게임</h1>
+    <div class="question" id="question">질문이 여기 표시됩니다</div>
+    <div class="options" id="options">
+      <!-- 선택지 버튼들이 여기 생성됩니다 -->
+    </div>
+    <div class="score" id="score"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "한국의 수도는 어디인가요?",
+        options: ["서울", "부산", "인천", "대구"],
+        answer: 0
+      },
+      {
+        question: "태양계에서 가장 큰 행성은?",
+        options: ["지구", "화성", "목성", "금성"],
+        answer: 2
+      },
+      {
+        question: "JavaScript의 공식 표기법은?",
+        options: ["Java Script", "Javascript", "JavaScript", "javaScript"],
+        answer: 2
+      },
+      {
+        question: "세계에서 가장 높은 산은?",
+        options: ["에베레스트", "킬리만자로", "알프스", "안데스"],
+        answer: 0
+      }
+    ];
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const scoreEl = document.getElementById('score');
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const current = quizData[currentQuestion];
+      questionEl.textContent = current.question;
+      optionsEl.innerHTML = '';
+
+      current.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.textContent = option;
+        button.onclick = () => selectAnswer(index);
+        optionsEl.appendChild(button);
+      });
+    }
+
+    function selectAnswer(selectedIndex) {
+      const correctIndex = quizData[currentQuestion].answer;
+      if(selectedIndex === correctIndex){
+        score++;
+      }
+
+      currentQuestion++;
+
+      if(currentQuestion < quizData.length){
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult(){
+      questionEl.textContent = '퀴즈 완료!';
+      optionsEl.innerHTML = '';
+      scoreEl.textContent = `당신의 점수: ${score} / ${quizData.length}`;
+    }
+
+    // 시작
+    loadQuestion();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>1번 게임: 좌우로 움직이는 공</title>
+  <style>
+    body { margin: 0; background: #222; }
+    canvas { display: block; margin: 0 auto; background: #eee; border: 2px solid #444; }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="500" height="300"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let x = canvas.width / 2;
+    let y = canvas.height / 2;
+    let radius = 20;
+    let speed = 3;
+    let direction = 1; // 1은 오른쪽, -1은 왼쪽
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 공 그리기
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = 'blue';
+      ctx.fill();
+
+      // 위치 업데이트
+      x += speed * direction;
+
+      // 화면 끝에 닿으면 방향 바꾸기
+      if (x + radius > canvas.width) {
+        direction = -1;
+      } else if (x - radius < 0) {
+        direction = 1;
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
+</body>
+</html>
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+.shake-animation {
+    animation: shake 0.5s infinite;
+}
